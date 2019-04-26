@@ -12,7 +12,6 @@
 
 ---
 ## Rust简介
----
 
 - performance [techpower][techpower]
 
@@ -24,7 +23,6 @@
 
 ---
 ## Rust基础
----
 
 - 基础类型 primitive types
 
@@ -277,7 +275,6 @@ macro_rules! myvec {
 
 ---
 ## 内存安全
----
 
 - 空指针 null pointer
 
@@ -297,7 +294,6 @@ Rust使用了另一种方式来保障内存安全。
 
 ---
 ## HowTo
----
 
 - 简单的测试
 
@@ -547,7 +543,6 @@ Send/Sync会由编译器根据条件自动实现：
 
 ---
 ## 案例学习
----
 
 实现一个链表（栈）
 提供一个默认的构造函数，提供push方法，提供pop方法。
@@ -629,7 +624,6 @@ mod test {
 
 ---
 ## 一些思考
----
 
 - Java
 
