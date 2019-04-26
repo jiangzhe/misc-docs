@@ -347,7 +347,38 @@ fn main() {
 }  // <- h1 out of the scope, print "hello dropped"
 ```
 
-默认情况下，编译器根据基础规则推断生命周期。
+- 引用(reference)与借用(borrowing)
+
+除了所有权转移，还可以临时借用，借用不会影响资源的释放。
+
+```rust
+struct Holder(String);
+fn use_ref(hr: &Holder) {
+	println!("borrowed: {}", hr.0);
+}
+
+let holder = Holder("hello, world".to_string());
+use_ref(&holder);
+println!("{}", holder.0);
+```
+
+借用不可以存活长于所有者
+
+```rust
+#[derive(Debug)]
+struct S {};
+let mut a: &S;
+{
+	let b = S{};
+	a = &b;  // error! `b` does not live long enough
+}
+println!("{:?}", a);  // use a here, so a must be alive until this line
+
+```
+
+编译器必须确保该原则，所有违反该原则的都会产生编译错误。这个机制被称作borrow checker。
+
+lifetime elision rules
 
 复杂情况下，需要手动标注生命周期。
 
@@ -379,40 +410,8 @@ fn longer_str(s1: &str, s2: &str) -> &str {
 }
 ```
 
-- 引用(reference)与借用(borrowing)
-
-除了所有权转移，还可以临时借用，借用不会影响资源的释放。
-
-```rust
-struct Holder(String);
-fn use_ref(hr: &Holder) {
-	println!("borrowed: {}", hr.0);
-}
-
-let holder = Holder("hello, world".to_string());
-use_ref(&holder);
-println!("{}", holder.0);
-```
-
 存在两种引用/借用。
 不可变引用(&T)与可变引用(&mut T)。
-
-- 借用检查(borrow checker)与NLL(non-lexical lifetime)
-
-借用不可以存活长于所有者
-
-```rust
-#[derive(Debug)]
-struct S {};
-let mut a: &S;
-{
-	let b = S{};
-	a = &b;  // error! `b` does not live long enough
-}
-println!("{:?}", a);  // use a here, so a must be alive until this line
-
-```
-
 不可变引用与可变引用的检查规则和读写锁相似：
 1. 不能同时存在不可变引用和可变引用
 2. 不能同时存在多个可变引用 
