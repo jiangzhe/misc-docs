@@ -1,10 +1,27 @@
-# 无GC的自动内存管理 - Rust实现
-## Rust简介 [官网][rust-lang]
+# Rust简介与无GC的自动内存管理
+
+- [Rust简介](#Rust简介)
+
+- [Rust基础](#Rust基础)
+
+- [内存安全](#内存安全)
+
+- [HowTo](#HowTo)
+
+- [案例学习](#案例学习)
+
+---
+## Rust简介
 
 - performance [techpower][techpower]
+
 - reliability
+
 - productivity
 
+[官网][rust-lang]
+
+---
 ## Rust基础
 
 - 基础类型 primitive types
@@ -256,6 +273,7 @@ macro_rules! myvec {
 // and more powerful proc_macros not introduced here
 ```
 
+---
 ## 内存安全
 
 - 空指针 null pointer
@@ -266,7 +284,16 @@ macro_rules! myvec {
 
 - 数据竞争 data race
 
-## Rust的承诺
+- ...
+
+即便资深的开发人员，在手动管理内存时仍然有可能引入以上提及的内存安全问题。
+
+GC因此被引入用来自动管理内存。
+
+Rust使用了另一种方式来保障内存安全。
+
+---
+## HowTo
 
 - 简单的测试
 
@@ -514,6 +541,7 @@ Send/Sync会由编译器根据条件自动实现：
 结构体的所有域都实现Send，则该结构体实现Send
 结构体的所有欲都实现Sync，则该结构体实现Sync
 
+---
 ## 案例学习
 
 实现一个链表（栈）
@@ -594,9 +622,11 @@ mod test {
 
 ```
 
-## 对其他语言的一些思考
+---
+## 一些思考
 
-Java
+- Java
+
 ```java
 class A {
 	private List<Thing> someThings;
@@ -613,7 +643,7 @@ class A {
 }
 ```
 
-如何设计一个安全的接口/类？
+- 如何设计一个安全的接口/类？
 
 [rust-lang]: https://www.rust-lang.org/
 [techpower]: https://www.techempower.com/benchmarks/#section=data-r17&hw=ph&test=plaintext
