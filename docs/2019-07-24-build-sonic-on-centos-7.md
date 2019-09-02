@@ -34,7 +34,9 @@ tar -Jxf llvm-${LLVM_VERSION}.src.tar.xz
 curl -kLO https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/cfe-${LLVM_VERSION}.src.tar.xz
 # runtime
 curl -kLO https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/compiler-rt-${LLVM_VERSION}.src.tar.xz
-tar -Jxf compiler-rt-${LLVM_VERSION}.src.tar.xz 
+# lldb
+curl -kLO https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/lldb-${LLVM_VERSION}.src.tar.xz
+
 # initialize builds
 mkdir -p llvm-${LLVM_VERSION}.build
 cd llvm-${LLVM_VERSION}.build
@@ -101,6 +103,29 @@ cmake -G 'Unix Makefiles' \
 -Wno-dev \
 ../compiler-rt-${LLVM_VERSION}.src
 make
+sudo make install
+
+cd ..
+# 安装lldb（可选）
+
+tar -xf lldb-${LLVM_VERSION}.src.tar.xz
+mkdir lldb-${LLVM_VERSION}.build
+cd lldb-${LLVM_VERSION}.build
+CC=gcc CXX=g++ \
+cmake -G 'Unix Makefiles' \
+-DLLVM_DIR=../llvm-${LLVM_VERSION}.src \
+-DClang_DIR=../cfe-${LLVM_VERSION}.src \
+-DCMAKE_INSTALL_PREFIX=/usr \
+-DCMAKE_BUILD_TYPE=Release \
+-DLLVM_LINK_LLVM_DYLIB=ON \
+-DLLVM_ENABLE_RTTI=ON \
+-DLLVM_TARGETS_TO_BUILD="host;AMDGPU;BPF" \
+-Wno-dev \
+../lldb-${LLVM_VERSION}.src
+
+make
+# 由于64位的python库位置问题，需要修改cmake install文件
+sed -i 's#lldb-8.0.1.build/./lib/python2.7#lldb-8.0.1.build/./lib64/python2.7#' scripts/cmake_install.cmake
 sudo make install
 
 # 愉快编译sonic
