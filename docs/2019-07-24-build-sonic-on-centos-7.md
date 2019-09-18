@@ -133,18 +133,12 @@ git clone https://github.com/valeriansaliou/sonic.git
 cd sonic
 cargo build --release
 
-# 安装glibc-2.18并初始化VSCode (来源：https://github.com/microsoft/vscode-cpptools/issues/19)
+# 安装glibc-2.18并使用VSCode LLDB插件进行调试 (来源：https://github.com/microsoft/vscode-cpptools/issues/19)
 wget http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.xz
 tar xvf glibc-2.18.tar.xz
 cd glibc-2.18;mkdir build;cd build
-../configure --prefix=/opt/glibc-2.18/
-make -j
+../configure --prefix=/usr --disable-profile --enable-add-ons --with-headers=/usr/include --with-binutils=/usr/bin
+make -j4
 sudo make install
 
-# 待续
-# 发现目前codelldb还无法指定glibc版本，所以CentOS上没办法使用...
-
 ```
-
-补充：为了能在Centos7+VSCode上使用lldb调试，需要额外安装lldb，以及glibc-2.18。
-
