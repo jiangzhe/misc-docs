@@ -142,3 +142,10 @@ make -j4
 sudo make install
 
 ```
+
+备注：
+不要在CentOS上升级glibc！
+不要在CentOS上升级glibc！
+不要在CentOS上升级glibc！
+重要的事情说三遍。
+不要问我是怎么知道的……我现在重装了Ubuntu……
