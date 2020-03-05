@@ -1,32 +1,28 @@
----
-layout: post
-title: "Nginx的Proxy设置"
-date: 2017-12-05 13:57:00 +0800
-categories: Nginx
-permalink: /:categories/:title
----
+# Nginx的Proxy设置
 
 最近在工作中用到nginx做反向代理，遇到一个与跳转相关的问题，涉及到了nginx里的几个配置项，在这里疏理一下。
+
+## 配置项
 
 - proxy_pass
 
 配置请求的代理地址。
 需要注意的是结尾“/”字符。
 
-location  | proxy_pass  | request_uri | proxied_url
---------- | ----------- | ----------- | ----------
-/dir1  | http://upstream1 | /dir1/a/b/c | http://upstream1/dir1/a/b/c
-       |                  | /dir1xyz    | http://upstream1/dir1xyz
-/dir2  | http://upstream2/ | /dir2/a/b/c | http://upstream2//a/b/c
-       |                   | /dir2xyz    | http://upstream2/xyz
-/dir3  | http://upstream3/sub3 | /dir3/a/b/c | http://upstream3/sub3/a/b/c
-       |                       | /dir3xyz    | http://upstream3/sub3xyz
-/dir4  | http://upstream4/sub4/ | /dir4/a/b/c | http://upstream4/sub4//a/b/c
-       |                        | /dir4xyz    | http://upstream4/sub4/xyz
-/dir5/ | http://upstream5  | /dir5/a/b/c | http://upstream5/dir5/a/b/c
-/dir6/ | http://upstream6/ | /dir6/a/b/c | http://upstream6/a/b/c
-/dir7/ | http://upstream7/sub7  | /dir7/a/b/c | http://upstream7/sub7a/b/c
-/dir8/ | http://upstream8/sub8/ | /dir8/a/b/c | http://upstream8/sub8/a/b/c
+| location  | proxy_pass  | request_uri | proxied_url |
+| :--- | :--- | :--- | :--- |
+| /dir1  | http://upstream1 | /dir1/a/b/c | http://upstream1/dir1/a/b/c |
+|   -    |        -         | /dir1xyz    | http://upstream1/dir1xyz |
+| /dir2  | http://upstream2/ | /dir2/a/b/c | http://upstream2//a/b/c |
+|   -    |        -          | /dir2xyz    | http://upstream2/xyz |
+| /dir3  | http://upstream3/sub3 | /dir3/a/b/c | http://upstream3/sub3/a/b/c |
+|   -    |        -              | /dir3xyz    | http://upstream3/sub3xyz |
+| /dir4  | http://upstream4/sub4/ | /dir4/a/b/c | http://upstream4/sub4//a/b/c |
+|   -    |        -               | /dir4xyz    | http://upstream4/sub4/xyz |
+| /dir5/ | http://upstream5  | /dir5/a/b/c | http://upstream5/dir5/a/b/c |
+| /dir6/ | http://upstream6/ | /dir6/a/b/c | http://upstream6/a/b/c |
+| /dir7/ | http://upstream7/sub7  | /dir7/a/b/c | http://upstream7/sub7a/b/c |
+| /dir8/ | http://upstream8/sub8/ | /dir8/a/b/c | http://upstream8/sub8/a/b/c |
 
 - proxy_set_header和proxy_redirect
 
