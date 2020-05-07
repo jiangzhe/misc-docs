@@ -57,13 +57,21 @@ class HelloController {
 
 2. ApplicationContext
 
+![AnnotationConfigServletWebServerApplicationContext](img/AnnotationConfigServletWebServerApplicationContext.png)
+
 3. Environment & PropertySource
+
+![StandardServletEnvironment](img/StandardServletEnvironment.png)
 
 4. Bean & BeanDefinition & AnnotationMetadata
 
+![AnnotatedGenericBeanDefinition](img/AnnotatedGenericBeanDefinition.png)
+
 5. BeanFactory & BeanDefinitionRegistry
 
-6. BeanPostProcessor & BeanFactoryPostProcessor
+6. BeanPostProcessor & BeanFactoryPostProcessor & BeanDefinitionRegistryPostProcessor
+
+![ConfigurationClassPostProcessor](img/ConfigurationClassPostProcessor.png)
 
 ### 完整运行
 
