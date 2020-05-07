@@ -2,48 +2,48 @@ App.main(args) {
   SpringApplication.run(App.class, args) {
     SpringApplicationRunListener.starting()
     prepareEnvironment() {
-      // StandardServletEnvironment.customizePropertySources() {
-      //   addLast(systemPropertiesPropertySource)
-      //   addLast(systemEnvironmentPropertySource)
-      // }
-      // configureProfiles()
-      // SpringApplicationRunListener.environmentPrepared() {
-      //   ApplicationEventMulticaster.multicastEvent(event) {
-      //     ApplicationListener.onApplicationEvent(event) {
-      //       ConfigFileApplicationListener.onApplicationEnvironmentPreparedEvent(event) {
-      //         Loader.load() {
-      //           PropertySourceLoader.load(name, resource)
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
+      StandardServletEnvironment.customizePropertySources() {
+        addLast(systemPropertiesPropertySource)
+        addLast(systemEnvironmentPropertySource)
+      }
+      configureProfiles()
+      SpringApplicationRunListener.environmentPrepared() {
+        ApplicationEventMulticaster.multicastEvent(event) {
+          ApplicationListener.onApplicationEvent(event) {
+            ConfigFileApplicationListener.onApplicationEnvironmentPreparedEvent(event) {
+              Loader.load() {
+                PropertySourceLoader.load(name, resource)
+              }
+            }
+          }
+        }
+      }
     }
     createApplicationContext() {
-      // registerAnnotationConfigProcessors(registry) {
-      //   registerPostProcessor(ConfigurationClassPostProcessor.class)
-      //   registerPostProcessor(AutowiredAnnotationBeanPostProcessor.class)
-      //   registerPostProcessor(RequiredAnnotationBeanPostProcessor.class)
-      //   registerPostProcessor(CommonAnnotationBeanPostProcessor.class)
-      // }
+      registerAnnotationConfigProcessors(registry) {
+        registerPostProcessor(ConfigurationClassPostProcessor.class)
+        registerPostProcessor(AutowiredAnnotationBeanPostProcessor.class)
+        registerPostProcessor(RequiredAnnotationBeanPostProcessor.class)
+        registerPostProcessor(CommonAnnotationBeanPostProcessor.class)
+      }
     }
     prepareContext(ctx) {
-      // postProcessApplicationContext(ctx)
-      // applyInitializers(ctx)
-      // SpringApplicationRunListener.contextPrepared(ctx)
-      // load(ctx, sources) {
-      //   BeanDefinitionLoader.load() {
-      //     AnnotatedBeanDefinitionReader.registerBean(annotatedClass) {
-      //       ConditionEvaluator.shouldSkip(metadata)
-      //       processCommonDefinitionAnnotations(abd)
-      //       BeanDefinitionCustomizer.customize(abd)
-      //       BeanDefinitionRegistry.registerBeanDefinition(bd) {
-      //         DefaultListableBeanFactory.registerBeanDefinition(bn, bd)
-      //       }
-      //     }
-      //   }
-      // }
-      // SpringApplicationRunListener.contextLoaded(ctx)
+      postProcessApplicationContext(ctx)
+      applyInitializers(ctx)
+      SpringApplicationRunListener.contextPrepared(ctx)
+      load(ctx, sources) {
+        BeanDefinitionLoader.load() {
+          AnnotatedBeanDefinitionReader.registerBean(annotatedClass) {
+            ConditionEvaluator.shouldSkip(metadata)
+            processCommonDefinitionAnnotations(abd)
+            BeanDefinitionCustomizer.customize(abd)
+            BeanDefinitionRegistry.registerBeanDefinition(bd) {
+              DefaultListableBeanFactory.registerBeanDefinition(bn, bd)
+            }
+          }
+        }
+      }
+      SpringApplicationRunListener.contextLoaded(ctx)
     }
     refreshContext(ctx) {
       AbstractApplicationContext.refresh() {
@@ -123,13 +123,33 @@ App.main(args) {
             }
           }
         }
-        registerBeanPostProcessors(beanFactory)
+        registerBeanPostProcessors(beanFactory) {
+          registerBeanPostProcessor(beanFactory, ConfigurationPropertiesBindingPostProcessor)
+          registerBeanPostProcessor(beanFactory, CommonAnnotationBeanPostProcessor)
+          registerBeanPostProcessor(beanFactory, AutowiredAnnotationBeanPostProcessor)
+          registerBeanPostProcessor(beanFactory, RequiredAnnotationBeanPostProcessor)
+        }
         initMessageSource()
         initApplicationEventMulticaster()
-        onRefresh()
+        onRefresh() {
+          ServletWebServerApplicationContext.createWebServer() {
+            getWebServerFactory()
+          }
+        }
         registerListeners()
-        finishBeanFactoryInitialization(beanFactory)
-        finishRefresh()
+        finishBeanFactoryInitialization(beanFactory) {
+          DefaultListableBeanFactory.preInstantiateSingletons() {
+            _createAllBeans()
+            _invokeCallbackOnEverySmartInitializingSingleton()
+          }
+        }
+        finishRefresh() {
+          initLifecycleProcessor()
+          _onRefresh(lifecycleProcessor)
+          _publishContextRefreshedEvent()
+          startWebServer()
+          _publishServletWebServerInitializedEvent()
+        }
       }
     }
     SpringApplicationRunListener.started()

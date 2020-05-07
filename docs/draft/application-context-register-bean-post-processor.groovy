@@ -1,0 +1,6 @@
+AbstractApplicationContext.registerBeanPostProcessors(beanFactory) {
+  registerBeanPostProcessor(beanFactory, ConfigurationPropertiesBindingPostProcessor)
+  registerBeanPostProcessor(beanFactory, CommonAnnotationBeanPostProcessor)
+  registerBeanPostProcessor(beanFactory, AutowiredAnnotationBeanPostProcessor)
+  registerBeanPostProcessor(beanFactory, RequiredAnnotationBeanPostProcessor)
+}
