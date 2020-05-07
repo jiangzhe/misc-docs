@@ -62,3 +62,4 @@ ConfigurationClassParser.retrieveBeanMethodMetadata()
 
 @Enable*, @Import, ImportAware, spring.factories
 
+8. BeanFactory.getBean()究竟做了什么？
