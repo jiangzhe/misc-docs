@@ -51,7 +51,21 @@ class HelloController {
 
 ## 一个Spring应用的启动过程
 
-- 完整运行
+### 几个概念
+
+1. SpringApplication
+
+2. ApplicationContext
+
+3. Environment & PropertySource
+
+4. Bean & BeanDefinition & AnnotationMetadata
+
+5. BeanFactory & BeanDefinitionRegistry
+
+6. BeanPostProcessor & BeanFactoryPostProcessor
+
+### 完整运行
 
 ```groovy
 App.main(args) {
