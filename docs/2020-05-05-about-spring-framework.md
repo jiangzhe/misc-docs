@@ -275,7 +275,9 @@ App.main(args) {
 ```groovy
 SpringApplication.prepareEnvironment() {
   StandardServletEnvironment.customizePropertySources() {
+    // 添加系统参数
     addLast(systemPropertiesPropertySource)
+    // 添加环境变量
     addLast(systemEnvironmentPropertySource)
   }
   configureProfiles()
@@ -283,8 +285,8 @@ SpringApplication.prepareEnvironment() {
     ApplicationEventMulticaster.multicastEvent(event) {
       ApplicationListener.onApplicationEvent(event) {
         ConfigFileApplicationListener.onApplicationEnvironmentPreparedEvent(event) {
+          // 加载默认配置文件，如application.yml
           Loader.load() {
-            // 加载用户通过注解定义的PropertySource
             PropertySourceLoader.load(name, resource)
           }
         }
