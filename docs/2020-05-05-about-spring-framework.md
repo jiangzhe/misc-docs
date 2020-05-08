@@ -49,9 +49,7 @@ class HelloController {
 
 9. 如何写一个Spring boot starter？
 
-## 一个Spring应用的启动过程
-
-### 几个概念
+## 几个概念
 
 1. SpringApplication
 
@@ -59,19 +57,197 @@ class HelloController {
 
 ![AnnotationConfigServletWebServerApplicationContext](img/AnnotationConfigServletWebServerApplicationContext.png)
 
-3. Environment & PropertySource
+```java
+interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
+		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
+  String getId();
+  String getApplicationName();
+  String getDisplayName();
+  long getStartupDate();
+  ApplicationContext getParent();
+  AutowireCapableBeanFactory getAutowireCapableBeanFactory();
+}
+```
+
+```java
+interface ConfigurableApplicationContext extends ApplicationContext, Lifecycle, Closeable {
+  void setId(String id);
+  void setParent(@Nullable ApplicationContext parent);
+  void setEnvironment(ConfigurableEnvironment environment);
+  ConfigurableEnvironment getEnvironment();
+  void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor);
+  void addApplicationListener(ApplicationListener<?> listener);
+  void addProtocolResolver(ProtocolResolver resolver);
+  void refresh();
+  void registerShutdownHook();
+  void close();
+  boolean isActive();
+  ConfigurableListableBeanFactory getBeanFactory();
+}
+```
+
+3. Environment & PropertySources
 
 ![StandardServletEnvironment](img/StandardServletEnvironment.png)
+
+```java
+interface PropertyResolver {
+  boolean containsProperty(String key);
+  String getProperty(String key);
+  String getProperty(String key, String defaultValue);
+  <T> T getProperty(String key, Class<T> targetType);
+  <T> T getProperty(String key, Class<T> targetType, T defaultValue);
+  String getRequiredProperty(String key);
+  <T> T getRequiredProperty(String key, Class<T> targetType);
+  String resolvePlaceholders(String text);
+  String resolveRequiredPlaceholders(String text);
+}
+```
+
+```java
+interface Environment extends PropertyResolver {
+  String[] getActiveProfiles();
+  String[] getDefaultProfiles();
+  boolean acceptsProfiles(String... profiles);
+}
+```
+
+```java
+interface ConfigurableEnvironment extends Environment, ConfigurablePropertyResolver {
+  void setActiveProfiles(String... profiles);
+  void addActiveProfile(String profile);
+  void setDefaultProfiles(String... profiles);
+  MutablePropertySources getPropertySources();
+  Map<String, Object> getSystemProperties();
+  Map<String, Object> getSystemEnvironment();
+  void merge(ConfigurableEnvironment parent);
+}
+```
+
+```java
+interface PropertySources extends Iterable<PropertySource<?>> {
+  boolean contains(String name);
+  PropertySource<?> get(String name);
+}
+```
+
+```java
+abstract class PropertySource<T> {
+  public String getName();
+  public T getSource();
+  public boolean containsProperty(String name);
+  public abstract Object getProperty(String name);
+}
+```
 
 4. Bean & BeanDefinition & AnnotationMetadata
 
 ![AnnotatedGenericBeanDefinition](img/AnnotatedGenericBeanDefinition.png)
 
+```java
+interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
+  void setParentName(@Nullable String parentName);
+  String getParentName();
+  void setBeanClassName(@Nullable String beanClassName);
+  String getBeanClassName();
+  void setScope(@Nullable String scope);
+  String getScope();
+  void setLazyInit(boolean lazyInit);
+  boolean isLazyInit();
+  void setDependsOn(@Nullable String... dependsOn);
+  String[] getDependsOn();
+  void setAutowireCandidate(boolean autowireCandidate);
+  boolean isAutowireCandidate();
+  void setPrimary(boolean primary);
+  boolean isPrimary();
+  void setFactoryBeanName(@Nullable String factoryBeanName);
+  String getFactoryBeanName();
+  void setFactoryMethodName(@Nullable String factoryMethodName);
+  String getFactoryMethodName();
+  ConstructorArgumentValues getConstructorArgumentValues();
+  MutablePropertyValues getPropertyValues();
+  boolean isSingleton();
+  boolean isPrototype();
+  boolean isAbstract();
+  int getRole();
+  String getDescription();
+  String getResourceDescription();
+  BeanDefinition getOriginatingBeanDefinition();
+}
+```
+
 5. BeanFactory & BeanDefinitionRegistry
+
+```java
+interface BeanFactory {
+  Object getBean(String name);
+  <T> T getBean(String name, @Nullable Class<T> requiredType);
+  Object getBean(String name, Object... args);
+  <T> T getBean(Class<T> requiredType);
+  <T> T getBean(Class<T> requiredType, Object... args);
+  boolean containsBean(String name);
+  boolean isSingleton(String name);
+  boolean isPrototype(String name);
+  boolean isTypeMatch(String name, ResolvableType typeToMatch);
+  boolean isTypeMatch(String name, @Nullable Class<?> typeToMatch);
+  Class<?> getType(String name);
+  String[] getAliases(String name);
+}
+```
+
+```java
+interface ConfigurableListableBeanFactory 
+  extends ListableBeanFactory, AutowireCapableBeanFactory, ConfigurableBeanFactory 
+{
+  void ignoreDependencyType(Class<?> type);
+  void ignoreDependencyInterface(Class<?> ifc);
+  void registerResolvableDependency(Class<?> dependencyType, @Nullable Object autowiredValue);
+  boolean isAutowireCandidate(String beanName, DependencyDescriptor descriptor);
+  BeanDefinition getBeanDefinition(String beanName);
+  Iterator<String> getBeanNamesIterator();
+  void clearMetadataCache();
+  void freezeConfiguration();
+  boolean isConfigurationFrozen();
+  void preInstantiateSingletons();
+}
+```
+
+```java
+interface BeanDefinitionRegistry extends AliasRegistry {
+  void registerBeanDefinition(String beanName, BeanDefinition beanDefinition);
+  void removeBeanDefinition(String beanName);
+  BeanDefinition getBeanDefinition(String beanName);
+  boolean containsBeanDefinition(String beanName);
+  String[] getBeanDefinitionNames();
+  int getBeanDefinitionCount();
+  boolean isBeanNameInUse(String beanName);
+}
+```
 
 6. BeanPostProcessor & BeanFactoryPostProcessor & BeanDefinitionRegistryPostProcessor
 
+```java
+interface BeanPostProcessor {
+  Object postProcessBeforeInitialization(Object bean, String beanName);
+  Object postProcessAfterInitialization(Object bean, String beanName);
+}
+```
+
+```java
+interface BeanFactoryPostProcessor {
+  void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory);
+}
+```
+
+```java
+interface BeanDefinitionRegistryPostProcessor extends BeanFactoryPostProcessor {
+  void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry);
+}
+```
+
 ![ConfigurationClassPostProcessor](img/ConfigurationClassPostProcessor.png)
+
+## 一个Spring应用的启动过程
 
 ### 完整运行
 
